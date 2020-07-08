@@ -1,0 +1,17 @@
+{% extends 'AVShop/base.html' %}
+{% block content %}
+    {% include 'AVShop/includes/now.html' with a='123456'%}
+    Hi!
+    <hr>
+    I am article with name {{ name }}.
+    {% if len > 10 %}
+        Too long.
+    {% elif len == 5 %}
+        It's ok
+    {% else %}
+        {% if len == 1 %}
+            Too short
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

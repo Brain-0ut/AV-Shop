@@ -1,0 +1,17 @@
+{% extends 'AVShop/base.html' %}
+
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% if products|length > 0 %} Search results for: {{ search }} {% endif %}
+        {% for product in products %}
+            <p><a href="{% url 'product_by_id' product.id %}">{{ product.title }}</a></p>
+            <small>{{ product.description | truncatechars:100 }}</small>
+            {% if not forloop.last %}
+                <hr style="border-top: 1px solid rgb(66,66,66)"/>{% endif %}
+        {% empty %}
+            No products found
+        {% endfor %}</div>
+{% endblock %}

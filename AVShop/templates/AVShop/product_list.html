@@ -1,0 +1,44 @@
+{% extends 'AVShop/base.html' %}
+
+
+{% block title %}Products list{% endblock %}
+
+{% block content %}
+
+    <p><a class="btn btn-info" href="{% url 'new_product' %}">Add new product</a></p>
+    <div class="row">
+        <div class="col-3">        {% for category in categories %}
+            <li>
+                {{ category.name }}
+                {% if category.child_categories.all %}
+                    <ul>{% for subcategory in category.child_categories.all %}
+                        <li>{{ subcategory }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </div>
+        <div class="col-5">   {% for product in product_list.all %}
+            <p><a href="{% url 'product_by_id' product.id %}">{{ product.title }}</a></p>
+            <small>{{ product.text | truncatechars:100 }}</small>
+            {% if user.is_superuser %}
+                <form action="{% url 'product_delete' product.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-small btn-warning">Delete</button>
+                </form>
+
+                <a href="{% url 'product_delete' product.id %}" class="btn btn-small btn-danger">Delete</a>
+                {% if user == product.author or user.is_superuser %}<a href="{% url 'edit_product' product.id %}">Edit</a>
+                {% endif %}
+            {% endif %}
+            {% if not forloop.last %}
+                <hr style="border-top: 1px solid rgb(66,66,66)"/>{% endif %}
+        {% empty %}
+            no products
+        {% endfor %}
+            <br/>
+            {% include 'AVShop/includes/pagination.html' %}
+        </div>
+    </div>
+{% endblock %}
