@@ -1,0 +1,35 @@
+{% extends 'AVShop/base.html' %}
+
+
+{% block title %}Shop{% endblock %}
+
+{% block content %}
+    <h4>Products</h4><br>
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-4">
+        {% for product in products %}
+          <div class="col mb-4">
+            <div class="card h-100">
+                <a href="{% url 'product_by_id' product.id %}">
+                    <img src="{{ product.picture.url }}" class="card-img-top" alt="{{ product.title }}">
+                </a>
+              <div class="card-body">
+                <h5 class="card-title">{{ product.title }}</h5>
+                <p class="card-text">{{ product.description | truncatechars:200 }}</p>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'edit_product' product.id %}"><button type="button" class="btn-primary btn-sm" >Змінити</button></a>
+                    {% endif %}
+              </div>
+                <div class="card-footer">
+                    <small class="text-muted text-left">Ціна: {{ product.price }}</small>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'product_by_id' product.id %}" class="col-sm-3"><button type="button" class="btn-success btn-sm" >Купити</button></a>
+                    {% endif %}
+                </div>
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

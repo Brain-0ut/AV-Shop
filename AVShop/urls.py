@@ -10,6 +10,6 @@ urlpatterns = [
     path('about_us', views.ProtectedTemplateView.as_view(template_name='AVShop/about.html'), name='about_us'),
     # path('<int:product_id>/like/', views.like_product, name='like_product'),
     path('<int:product_id>', views.product_by_id, name='product_by_id'),
-    path('<slug:product_name>', views.product_by_name, name='product_by_name'),
+    # path('<slug:product_title>', views.product_by_name, name='product_by_name'),
     path('search/', views.search, name='products_search'),
 ]

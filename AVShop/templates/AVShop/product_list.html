@@ -4,41 +4,41 @@
 {% block title %}Products list{% endblock %}
 
 {% block content %}
+    <br>
+    {% if user.is_superuser %}
 
-    <p><a class="btn btn-info" href="{% url 'new_product' %}">Add new product</a></p>
-    <div class="row">
-        <div class="col-3">        {% for category in categories %}
-            <li>
-                {{ category.name }}
-                {% if category.child_categories.all %}
-                    <ul>{% for subcategory in category.child_categories.all %}
-                        <li>{{ subcategory }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-            </li>
-        {% endfor %}
-        </div>
-        <div class="col-5">   {% for product in product_list.all %}
-            <p><a href="{% url 'product_by_id' product.id %}">{{ product.title }}</a></p>
-            <small>{{ product.text | truncatechars:100 }}</small>
-            {% if user.is_superuser %}
-                <form action="{% url 'product_delete' product.id %}" method="post">
-                    {% csrf_token %}
-                    <button class="btn btn-small btn-warning">Delete</button>
-                </form>
-
-                <a href="{% url 'product_delete' product.id %}" class="btn btn-small btn-danger">Delete</a>
-                {% if user == product.author or user.is_superuser %}<a href="{% url 'edit_product' product.id %}">Edit</a>
-                {% endif %}
-            {% endif %}
-            {% if not forloop.last %}
-                <hr style="border-top: 1px solid rgb(66,66,66)"/>{% endif %}
-        {% empty %}
-            no products
-        {% endfor %}
+        <div class="text-center"><a class="btn btn-info" href="{% url 'new_product' %}">Add new product</a></div>
+        <br>
+        <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8 align-right">
+            {% for product in product_list.all %}
+                <div class="card">
+                <h5 class="card-header"><a href="{% url 'product_by_id' product.id %}">{{ product.title }}</a>
+                </h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <img src="{{ product.picture.url }}" class="card-img-top" alt="{{ product.title }}">
+                        </div>
+                        <div class="col">
+                            <p class="card-text">{{ product.description | truncatechars:100 }}</p>
+                            <a href="{% url 'edit_product' product.id %}" class="btn btn-primary">Редагувати</a>
+                            <form action="{% url 'product_delete' product.id %}" method="post">
+                                {% csrf_token %}
+                                <button class="btn btn-small btn-danger">Видалити</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                no products
+            {% endfor %}
             <br/>
             {% include 'AVShop/includes/pagination.html' %}
+            </div>
+            <div class="col"></div>
         </div>
-    </div>
+    {% else %}<h1 style="text-align: center; color: darkred">ВИ НЕ МАЄТЕ ДОСТУПУ ДО ЦЬОГО РОЗДІЛУ</h1>
+    {% endif %}
 {% endblock %}

@@ -20,18 +20,10 @@ class ProtectedTemplateView(UserPassesTestMixin, TemplateView):
 
 
 def index(request):
-    products = models.Product.objects.filter(is_deleted=False).order_by('name')
-    return render(request, 'AVShop/base.html',
+    products = models.Product.objects.filter(is_deleted=False).order_by('title')
+    return render(request, 'AVShop/shop.html',
                   {'products': products,
                    })
-
-
-def product_by_name(request, product_name):
-    now = datetime.datetime.now()
-    return render(request, 'AVShop/product_by_name.html',
-                  {'name': product_name,
-                   'len': len(product_name),
-                   'rendered': now})
 
 
 def product_by_id(request, product_id):
@@ -39,7 +31,7 @@ def product_by_id(request, product_id):
         product = models.Product.objects.get(id=product_id)
     except (models.Product.DoesNotExist, models.Product.MultipleObjectsReturned):
         return redirect('/')
-    return render(request, 'AVShop/product_by_id.html', {'Product': product})
+    return render(request, 'AVShop/product_by_id.html', {'product': product})
 
 
 def search(request):
@@ -88,12 +80,12 @@ class ProductCreate(CreateView):
     form_class = forms.ProductForm
     success_url = reverse_lazy('all_products')
 
-    def form_valid(self, form):
-        """If the form is valid, save the associated model."""
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        self.object.save()
-        return super().form_valid(form)
+    # def form_valid(self, form):
+    #     """If the form is valid, save the associated model."""
+    #     self.object = form.save(commit=False)
+    #     self.object.author = self.request.user
+    #     self.object.save()
+    #     return super().form_valid(form)
 
 
 class ProductUpdate(UpdateView):
