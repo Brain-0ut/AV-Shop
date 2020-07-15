@@ -4,28 +4,30 @@
 
 {% block content %}
     <div class="container">
-        {% include 'AVShop/includes/now.html' %}
+        <div class="row">
+            <div class="col text-left">{% include 'AVShop/includes/now.html' %}</div>
+            <div class="col text-right">Posted by: {{ product.user }} at {{ product.created_at }}</div>
+        </div>
         <img src="{{ product.picture.url }}" class="card-img-top" alt="{{ product.title }}">
         <h1>{{ product.title }}</h1>
         <div>{{ product.description }}</div>
         <hr/>
         <div class="row justify-content-around">
-            <div class="col-4">
+            <div class="col text-center">
               <h3>Ціна: {{ product.price }}</h3>
             </div>
-            <div class="col-4 text-right">
+            <div class="col text-center">
               <h3>Доступна кількість: {{ product.amount }}</h3>
             </div>
         </div>
         <hr/>
-        Posted by: {{ product.user }} at {{ product.created_at }}
         <br/>
         {% if user.is_authenticated %}
             <form id="buy_form" method="post">
                 {% csrf_token %}
                 <div class="form-row row justify-content-center">
                     <div class="col-4">
-                        <input type="text" class="form-control" placeholder="Введіть кількість:">
+                        <input type="text" name ="amount_buy" class="form-control" placeholder="Введіть кількість:">
                     </div>
                         <div class="col-2">
                         <button type="submit " class="btn btn-danger">Купити</button>

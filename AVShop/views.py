@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DetailView, ListView, DeleteView, CreateView, UpdateView
 from AVShop import models, forms  # forms
-
+from users import models as _models
 
 class ProtectedTemplateView(UserPassesTestMixin, TemplateView):
     def test_func(self):
@@ -27,12 +27,42 @@ def index(request):
 
 
 def product_by_id(request, product_id):
+    if request.method == 'POST':
+        buy_product(request, product_id)
+    else:
+        try:
+            product = models.Product.objects.get(id=product_id)
+        except (models.Product.DoesNotExist, models.Product.MultipleObjectsReturned):
+            return redirect('/')
+        return render(request, 'AVShop/product_by_id.html', {'product': product})
     try:
-        product = models.Product.objects.get(id=product_id)
+        purchases = models.Purchase.objects.filter(user=request.user.id)
     except (models.Product.DoesNotExist, models.Product.MultipleObjectsReturned):
         return redirect('/')
-    return render(request, 'AVShop/product_by_id.html', {'product': product})
+    return redirect('/users/personal/', {'purchase': purchases})  # render(request, 'users/personal_page.html', {'purchase': purchases})
+                                                                  # redirect('/users/personal/', {'purchase': purchases})
 
+
+def buy_product(request, product_id):
+    product = models.Product.objects.get(id=product_id)
+    user = _models.User.objects.get(id=request.user.id)
+    amount_buy = int(request.POST['amount_buy'])
+    error = ''
+    if amount_buy > product.amount:
+        print("More then present!")
+        error = "More then present!"
+    elif user.cash < amount_buy*product.price:
+        print("You don`t have enough money!")
+        error = "You don`t have enough money!"
+    else:  # amount_buy <= product.amount and user.cash >= amount_buy*product.price:
+        product.amount -= amount_buy
+        user.cash -= amount_buy*product.price
+        print(product.title + ' ' + str(product.amount))
+        print(user.username + ' ' + str(user.cash))
+        purchase = models.Purchase(user=user, product=product, price=product.price, amount=amount_buy)
+        print(purchase)
+        purchase.save()
+    return request, error
 
 def search(request):
     # Get request value
@@ -55,6 +85,13 @@ def search(request):
 class ProductDetailView(DetailView):
     model = models.Product
     context_object_name = 'product'
+
+
+class PurchaseListView(ListView):
+    model = models.Purchase
+    queryset = models.Purchase.objects.all()
+    ordering = '-user'
+    paginate_by = 10
 
 
 class ProductsListView(ListView):

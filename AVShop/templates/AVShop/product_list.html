@@ -10,35 +10,45 @@
         <div class="text-center"><a class="btn btn-info" href="{% url 'new_product' %}">Add new product</a></div>
         <br>
         <div class="row">
-        <div class="col-2"></div>
-        <div class="col-8 align-right">
-            {% for product in product_list.all %}
-                <div class="card">
-                <h5 class="card-header"><a href="{% url 'product_by_id' product.id %}">{{ product.title }}</a>
-                </h5>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-3">
-                            <img src="{{ product.picture.url }}" class="card-img-top" alt="{{ product.title }}">
-                        </div>
-                        <div class="col">
-                            <p class="card-text">{{ product.description | truncatechars:100 }}</p>
-                            <a href="{% url 'edit_product' product.id %}" class="btn btn-primary">Редагувати</a>
-                            <form action="{% url 'product_delete' product.id %}" method="post">
-                                {% csrf_token %}
-                                <button class="btn btn-small btn-danger">Видалити</button>
-                            </form>
+            <div class="col-2"></div>
+            <div class="col-8 align-right">
+                {% for product in product_list.all %}
+                    <div class="card">
+                    <h5 class="card-header"><a href="{% url 'product_by_id' product.id %}">{{ product.title }}</a>
+                    </h5>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-3">
+                                <img src="{{ product.picture.url }}" class="card-img-top" alt="{{ product.title }}">
+                            </div>
+                            <div class="col">
+                                <p class="card-text">{{ product.description | truncatechars:100 }}</p>
+                                <a href="{% url 'edit_product' product.id %}" class="btn btn-primary">Редагувати</a>
+                                {#                            <form action="{% url 'product_delete' product.id %}" method="post">#}
+                                {#                                {% csrf_token %}#}
+                                <button type="button" class="btn btn-small btn-danger" data-toggle="popover"
+                                        title="УВАГА!" data-content="Можливість видаляти продукти наразі відключена!">
+                                    Видалити
+                                </button>
+                                {#                            </form>#}
+                            </div>
                         </div>
                     </div>
+                {% empty %}
+                    no products
+                {% endfor %}
+                {% include 'AVShop/includes/pagination.html' %}
                 </div>
-            {% empty %}
-                no products
-            {% endfor %}
-            <br/>
-            {% include 'AVShop/includes/pagination.html' %}
+                <div class="col"></div>
             </div>
-            <div class="col"></div>
         </div>
     {% else %}<h1 style="text-align: center; color: darkred">ВИ НЕ МАЄТЕ ДОСТУПУ ДО ЦЬОГО РОЗДІЛУ</h1>
     {% endif %}
+{% endblock %}
+{% block extrajs %}
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
+    </script>
 {% endblock %}

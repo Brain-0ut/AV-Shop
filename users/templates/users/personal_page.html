@@ -3,7 +3,7 @@
 {% block title %} My info {% endblock %}
 
 {% block content %}
-    Username: {{ user.username }}
+    Username: {{ user.username }}<br>
     Email: {{ user.email }}
     {% if confirm_form %}
         <form method="post">
@@ -13,5 +13,35 @@
             {{ confirm_form }}
             <button>Confirm</button>
         </form>
+    {% endif %}
+    {% if purchase_list %}
+        {% for purchase in purchase_list %}
+            <div class="card">
+                    <h5 class="card-header"><a href="{% url 'product_by_id' purchase.product.id %}">{{ purchase.product.title }}</a>
+                    </h5>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-3">
+                                <img src="{{ purchase.product.picture.url }}" class="card-img-top" alt="{{ purchase.product.title }}">
+                            </div>
+                            <div class="col">
+                                <p class="card-text">{{ purchase.product.description | truncatechars:100 }}<br>
+                                    Куплено {{ purchase.amount }} одиниць за ціною {{ purchase.product.price }}<br>
+                                    У Вас є ТРИ хвилини з моменту купівлі (до {{ (purchase.created_at)+timestamp(minutes=3) }}), щоб відмінити свою покупку!
+                                </p>
+                                <a href="{% url 'edit_product' purchase.product.id %}" class="btn btn-primary">Редагувати</a>
+                                {#                            <form action="{% url 'product_delete' product.id %}" method="post">#}
+                                {#                                {% csrf_token %}#}
+                                <button type="button" class="btn btn-small btn-danger" data-toggle="popover"
+                                        title="УВАГА!" data-content="Можливість видаляти продукти наразі відключена!">
+                                    Видалити
+                                </button>
+                                {#                            </form>#}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    У Вас немає наявних покупок
+        {% endfor %}
     {% endif %}
 {% endblock %}

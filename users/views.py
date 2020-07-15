@@ -9,6 +9,7 @@ from django.views.generic import DetailView
 
 from users.forms import RegisterForm, EmailConfirmForm
 from users.models import User
+from AVShop import models
 
 from django import views
 
@@ -39,9 +40,12 @@ class UserInfo(View):
 
     def get(self, request, *args, **kwargs):
         confirm_form = None
+        purchase_list = models.Purchase.objects.filter(user=self.request.user.id)
         if not self.request.user.email_confirmed:
             confirm_form = EmailConfirmForm()
-        return render(request, self.template_name, {'confirm_form': confirm_form})
+        return render(request, self.template_name, {'confirm_form': confirm_form,
+                                                    'purchase_list': purchase_list,
+                                                    })
 
     def post(self, request, *args, **kwargs):
         if self.request.POST.get('action') == 'confirm':

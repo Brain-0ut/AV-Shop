@@ -25,13 +25,13 @@ class Product(TimeStampModel):
     is_deleted = models.BooleanField(default=False)
 
 
-
 class Purchase(TimeStampModel):
     user = models.ForeignKey(USER_MODEL, on_delete=models.SET_NULL,
                              blank=True, null=True)
     product = models.ForeignKey('Product', on_delete=models.SET_NULL,
                                 blank=True, null=True)
     amount = models.PositiveSmallIntegerField(blank=False, null=False)
+    price = models.PositiveSmallIntegerField(blank=True, null=True)
 
 
 class Refund(TimeStampModel):
